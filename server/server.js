@@ -1,25 +1,25 @@
-//Framework Configuration
+// server.js
 const express = require("express");
-const connectDb = require("./config/dbConnection");
-const errorHandler = require("./middleware/errorHandler");
+const connectDb = require("./config/dbConnection"); // Your DB connection logic
+const errorHandler = require("./middleware/errorHandler"); // Your error handler
 const cors = require("cors");
-
-connectDb();
+const dotenv = require("dotenv");
+dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
-
+connectDb();
 app.use(express.json());
 app.use(cors());
 
-//ERROR HANDLING MIDDLEWARE
-app.use(errorHandler);
-
-//ROUTES BELOW
+// ROUTES
 app.get("/", (req, res) => {
   res.send("working");
 });
 
-//APP CONFIG START
+// ERROR HANDLING MIDDLEWARE should be added after routes
+app.use(errorHandler);
+
+// Start the server
 app.listen(port, () => {
-  console.log("Server running on port http://localhost:${port}");
+  console.log(`Server running on port http://localhost:${port}`); 
 });
