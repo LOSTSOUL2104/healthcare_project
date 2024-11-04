@@ -1,4 +1,3 @@
-
 const express = require("express");
 const connectDb = require("./config/dbConnection"); // Your DB connection logic
 const errorHandler = require("./middleware/errorHandler"); // Your error handler
@@ -7,21 +6,33 @@ const dotenv = require("dotenv");
 dotenv.config();
 const path = require("path");
 const hbs = require("hbs");
+const userRoutes = require("./routes/userRoutes"); // Import user routes
+
 const app = express();
 const port = process.env.PORT || 5000;
+
+// Connect to the database
 connectDb();
+
+// Middleware setup
 app.use(express.json());
 app.use(cors());
+app.use("/api/user", userRoutes);
+
+// Setting up view engine and partials
 app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "views"));
+hbs.registerPartials(path.join(__dirname, "/views/partials"));
 
 // ROUTES
-hbs.registerPartials(path.join(__dirname, "/views/partials"));
 app.get("/", (req, res) => {
   res.send("working");
 });
-app.get("/home",(req,res) =>{
-  res.render("home",{})
-})
+
+app.get("/home", (req, res) => {
+  res.render("home", {});
+});
+
 app.get("/allusers", (req, res) => {
   res.render("users", {
     users: [
@@ -31,13 +42,12 @@ app.get("/allusers", (req, res) => {
   });
 });
 
-app.set("view engine", "hbs");
-app.set("views", path.join(__dirname, "views"));
+// Use user routes for API registration
 
-// ERROR HANDLING MIDDLEWARE should be added after routes
+// Error handling middleware should be added after routes
 app.use(errorHandler);
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running on port http://localhost:${port}`); 
+  console.log(`Server running on http://localhost:${port}`);
 });

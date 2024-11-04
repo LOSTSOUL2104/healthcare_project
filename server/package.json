@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "async": "^3.2.6",
+    "async-handlers": "^1.3.0",
+    "bcrypt": "^5.1.1",
     "body": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -7,6 +10,7 @@
     "handlebars": "^4.7.8",
     "hbs": "^4.2.0",
     "hsb": "^1.0.2",
+    "modals": "^0.1.9",
     "mongoose": "^8.7.2",
     "parser": "^0.1.4"
   },
