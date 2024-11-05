@@ -1,6 +1,6 @@
-const { constants } = require("../constants/constant.js");
+const { constants } = require("../constants/constant");
 const errorHandler = (err, req, res, next) => {
-  const statusCode = res.sendCode ? res.statusCode : 500;
+  const statusCode = res.statusCode ? res.statusCode : 500;
   switch (statusCode) {
     case constants.VALIDATION_ERROR:
       res.json({
@@ -12,29 +12,32 @@ const errorHandler = (err, req, res, next) => {
 
     case constants.NOT_FOUND:
       res.json({
-        title: "not found",
+        title: "Not Found",
         message: err.message,
         stackTrace: err.stack,
       });
       break;
+
     case constants.UNAUTHORIZED:
       res.json({
-        title: "Unauthourised",
+        title: "Unauthorized",
         message: err.message,
         stackTrace: err.stack,
       });
       break;
+
     case constants.SERVER_ERROR:
       res.json({
-        title: "Server error",
+        title: "Server Error",
         message: err.message,
         stackTrace: err.stack,
       });
-      default:
-        console.log("no error,shandaar 👍");
-        break;
+      break;
+
+    default:
+      console.log("No Error, All good");
+      break;
   }
-  // console.error(err.stack);
-  // res.status(500).send({ message: err.message });
 };
+
 module.exports = errorHandler;
