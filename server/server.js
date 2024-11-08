@@ -12,18 +12,16 @@ const port = process.env.PORT || 5000;
 const userRouter = require("./routes/userRouter");
 const doctorRoutes = require("./routes/doctorRoutes");
 
-// Load environment variables
+
 dotenv.config();
 
-// Connect to the database
 connectDb();
 
-// Middleware setup
 app.use(express.json());
 app.use(cors());
 app.use(express.static("public"));
 
-// Configure Multer for file uploads
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -32,16 +30,26 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage });
-
-
+const upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    console.log("Uploaded file extension:", ext);
+    if (ext !== ".jpg" && ext !== ".png" && ext !== ".gif" && ext != ".jpeg") {
+      return callback(new Error("Only images are allowed."));
+    }
+    callback(null, true);
+  },
+  limits: {
+    fileSize: 1024 * 1024,
+  },
+});
 
 // API routes
 app.use("/api/users", userRouter);
 app.use("/api/register", userRouter);
 app.use("/api/doctors", doctorRoutes);
 
-// File upload route
 app.post("/api/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
@@ -49,11 +57,9 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   res.send(`File uploaded successfully: ${req.file.filename}`);
 });
 
-
 app.set("view engine", "hbs");
 hbs.registerPartials(path.join(__dirname, "./views/partials/header"));
 
-// Sample users data function
 const getSampleUsers = () => [
   { username: "Parth", date: "23-10-2024", subject: "Maths" },
   { username: "Aarav", date: "23-10-2024", subject: "Science" },
