@@ -1,60 +1,35 @@
-const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt");
-const User = require("../models/userModels"); 
-require("dotenv").config();
-
-const registerUser = asyncHandler(async (req, res) => {
-  const {
-    firstName,
-    lastName,
-    age,
-    gender,
-    bloodGroup,
-    email,
-    phoneNumber,
-    password,
-  } = req.body;
-
-  // Validate all required fields
-  if (
-    !firstName ||
-    !lastName ||
-    !age ||
-    !gender ||
-    !bloodGroup ||
-    !email ||
-    !phoneNumber ||
-    !password
-  ) {
-    res.status(400);
-    throw new Error("Please fill all fields");
+const { constants } = require("../constants/constant");
+const errorHandler = (err, req, res, next) => {
+  const statusCode = res.statusCode ? res.statusCode : 500;
+  switch (statusCode) {
+    case constants.VALIDATION_ERROR:
+      res.json({
+        title: "validation failed",
+        message: err.message,
+        stackTrace: err.stack,
+      });
+      break;
+    case constants.NOT_FOUND:
+      res.json({
+        title: "Not Found",
+        message: err.message,
+        stackTrace: err.stack,
+      });
+    case constants.UNAUTHORIZED:
+      res.json({
+        title: "Unauthorized",
+        message: err.message,
+        stackTrace: err.stack,
+      });
+    case constants.SERVER_ERROR:
+      res.json({
+        title: "Server Error",
+        message: err.message,
+        stackTrace: err.stack,
+      });
+    default:
+      console.log(" No error , all good ! ");
+      break;
   }
-
-  // Check if the user already exists
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    return res.status(400).json({ message: "User already exists" });
-  }
-
-  // Hash the password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  // Create a new user
-  const newUser = await User.create({
-    firstName,
-    lastName,
-    age,
-    gender,
-    bloodGroup,
-    email,
-    phoneNumber,
-    password: hashedPassword,
-  });
-
-  res
-    .status(201)
-    .json({ message: "User registered successfully", user: newUser });
-});
-
-module.exports = { registerUser };
+};
+module.exports = errorHandler;

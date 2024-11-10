@@ -6,10 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    {{>header}}
+    {{> header}} 
     <ul>
-        {{#each users as |users|}}
-        <li>{{users.username}}</li>
+        {{#each users as |user|}}
+        <li>
+            {{user.username}}
+        </li>
         {{/each}}
     </ul>
 </body>

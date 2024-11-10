@@ -1,40 +1,21 @@
-// doctorRoutes.js
 const express = require("express");
 const router = express.Router();
-const Doctor = require("../models/doctorDetailsModal"); 
+// const { registerDoctor,deleteDoctor} = require("../controllers/doctorsDetailsController"); // Ensure the path is correct
+const {
+  registerDoctor,
+  deleteDoctor,
+  getAllDoctors,
+  getDoctorByEmail,
+} = require("../controllers/doctorsDetailsController");
 
-router.post("/register", async (req, res) => {
-  try {
-    // Extract relevant data from the request body
-    const { email, name, specialty } = req.body;
+// Route to register a doctor
+router.post("/register", registerDoctor);
+router.delete("/delete/:email", deleteDoctor);
 
-    // Check if a doctor with the same email already exists
-    const existingDoctor = await Doctor.findOne({ email });
+// Route to get all doctors
+router.get("/", getAllDoctors); // This route will return all doctors
 
-    if (existingDoctor) {
-      // If a duplicate is found, respond with an error message
-      return res
-        .status(400)
-        .json({ message: "A doctor with this email already exists." });
-    }
-
-    // If no duplicate, proceed with registration
-    const newDoctor = new Doctor({
-      name,
-      email,
-      specialty,
-    });
-
-    // Save the new doctor in the database
-    await newDoctor.save();
-
-    res
-      .status(201)
-      .json({ message: "Doctor registered successfully", doctor: newDoctor });
-  } catch (error) {
-    console.error("Error registering doctor:", error);
-    res.status(500).json({ message: "An error occurred during registration" });
-  }
-});
+// Route to get a specific doctor by email
+router.get("/email/:email", getDoctorByEmail); // This route will return a specific doctor by email
 
 module.exports = router;
