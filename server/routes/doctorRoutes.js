@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-// const { registerDoctor,deleteDoctor} = require("../controllers/doctorsDetailsController"); // Ensure the path is correct
 const {
   registerDoctor,
   deleteDoctor,
